@@ -52,7 +52,7 @@ commands to execute
 mvn compile
 mvn clean package
 java -jar target/projectname-1.0-SNAPSHOT.jar
-[08-06-2025 02:13 PM] Krishna: write this code code in build.gradle
+write this code code in build.gradle
 
 plugins {
     id 'java'
@@ -81,7 +81,7 @@ gradle jar
 
 java -jar build/libs/projectname-1.0-SNAPSHOT.jar
 ------------------------------------------------------
-[08-06-2025 02:13 PM] Krishna: open new project -> select maven ->create -> in intellji open terminal  and give this cmnds
+ open new project -> select maven ->create -> in intellji open terminal  and give this cmnds
 
 gradle init
 yes

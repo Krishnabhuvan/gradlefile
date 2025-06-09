@@ -1,0 +1,158 @@
+1. Creating 3-Instances in AWS
+2. Install MobaXterm
+3. create 3 sessions in MobaXterm
+4. Run basic commands in the 3 sessions created
+5. Run ansible commands in controller session - to install ansible
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+ansible --version
+
+cat /etc/ansible/ansible.cfg
+
+ansible-config init --disabled > ansible.cfg
+ls (output)
+- op: ansible.cfg snap
+
+vi ansible.cfg - 
+configuration code is visible 
+type the /host_key_checking to find the required line then click enter
+cursor is moved to the edit line 
+now press i to get into INSERT mode then once in insert mode edit it from True to False 
+click ESC > :wq to write the changes and quit
+after this u have to paste ssh-cmnd
+
+ssh-keygen -t rsa
+cd .ssh/
+ls - op:authorized_keys  id_rsa  id_rsa.pub
+cat id_rsa.pub - copy the public key of controller
+
+In client 1
+cd .ssh/
+ls - op:authorized_keys
+cat authorized_keys
+vi authorized_keys
+configuration code comes up - go to INSERT MODE 
+then in the next line of client 1 public IP paste(click and paste) the public IP of controller
+ESC > :wq
+to verify the insert - cat authorized_keys - u shall notice the addition
+
+In client 2
+SAME PROCEDURE
+
+cd ~
+
+to verify client 1 and 2 are accessible from controller
+CLIENT 1
+ssh ubuntu@172.31.8.64 : private ip of client-1
+exit 
+
+CLIENT 2
+ssh ubuntu@172.31.13.235
+exit
+
+
+Creating directory and inventory files
+mkdir example1
+touch example1/inventory
+vi example1/inventory - private ip of client 1 #in insert mode and ESC and :wq
+cat example1/inventory
+"op:172.31.8.64"
+
+mkdir example2
+touch example2/inventory
+vi example2/inventory - private ip of client 2 #in insert mode and ESC and :wq
+cat example2/inventory
+"op:172.31.13.235"
+
+root@ansible-controller:~# ls
+example1  example2  snap
+
+ansible all -i example1/inventory -i example2/inventory -m ping -u ubuntu
+
+vi index.html
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            text-align: center;
+            padding-top: 100px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<h1>Welcome to SJBIT</h1>
+<p>ASIYA ANJUM S</p>
+<p>AASHISH S ANDERSON</p>
+<p>BHOOMIKA N</p>
+<p>DEEKSHITHA H N</p>
+</body>
+</html>
+
+touch apache2-install.yml
+ls
+vi apache2-install.yml
+---
+- name: install apache2 on client servers
+  hosts: all
+  become: yes
+  gather_facts: true
+  vars:
+    web_server: apache2
+  tasks:
+    - name: update cache
+      apt:
+        update_cache: yes
+    - name: install apache2
+      apt:
+        name: "{{ web_server }}"
+        state: present
+    - name: copy
+      copy:
+        src: index.html
+        dest: /var/www/html/
+
+  handlers:
+    - name: Restart apache2
+      service:
+        name: apache2
+        state: restarted
+
+
+cat apache2-install.yml
+
+
+
+root@ansible-controller:~# ansible-playbook -i example1/inventory -i example2/inventory apache2-install.yml -u ubuntu --syntax-check
+
+root@ansible-controller:~# ansible-playbook -i example1/inventory -i example2/inventory apache2-install.yml -u ubuntu --check
+
+root@ansible-controller:~# ansible-playbook -i example1/inventory -i example2/inventory apache2-install.yml -u ubuntu
+
+
+Access the ansible-client-1 AND 2 machine to check the installation of apache2 and confirm that index.html has been copied to the location defined in the Ansible playbook.
+in client 1 and 2
+do the same steps and check is index.html access there
+ubuntu@ansible-client-1:~$ systemctl status apache2
+ubuntu@ansible-client-1:~$ cd /var/www/html
+ubuntu@ansible-client-1:/var/www/html$ ls
+index.html
+ubuntu@ansible-client-1:/var/www/html$ cat index.html
+ you'll get the html code aste
+
+DONEEEEEE!!!!!!!!!!!!!!!!

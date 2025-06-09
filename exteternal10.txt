@@ -1,0 +1,13 @@
+git init --to initialize the git
+git add . -- add all files to the git
+git commit -m “first commit” 
+git branch -M main
+git config --global user.name “username” 
+git config --global user.email “email-id”
+ssh-keygen -t rsa rsa -b 4096 -C <email-id>
+cat ~/.ssh/id_rsa.pub
+git remote add origin url-path
+git remote set-url origin <ur.git repo url>
+git remote -v
+git push --set-upstream origin main
+git push
